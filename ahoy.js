@@ -23,6 +23,7 @@
   var page = ahoy.page || window.location.pathname;
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits"
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events"
+  var headers = {};
 
   // cookies
 
@@ -104,7 +105,8 @@
       if (canStringify) {
         $.ajax({
           type: "POST",
-          url: eventsUrl,
+          url: ahoy.eventsUrl,
+          headers: ahoy.headers,
           data: JSON.stringify([event]),
           contentType: "application/json; charset=utf-8",
           dataType: "json",
@@ -179,7 +181,18 @@
 
       log(data);
 
-      $.post(visitsUrl, data, setReady, "json");
+      $.ajax({
+        type: "POST",
+        headers: ahoy.headers,
+        url: ahoy.visitsUrl,
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function() {
+          setReady();
+        }
+      });
+
     } else {
       log("Cookies disabled");
       setReady();
